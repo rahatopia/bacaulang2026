@@ -29,9 +29,21 @@ export async function POST(req: Request) {
       }
     )
 
-    const result = await res.json()
+    const text = await res.text()
 
-    console.log("Cloudinary response:", result)
+    console.log("Cloudinary raw response:", text)
+
+    let result
+
+    try {
+      result = JSON.parse(text)
+    } catch {
+      return NextResponse.json({
+        status: "error",
+        message: "Cloudinary returned non JSON",
+        raw: text
+      })
+    }
 
     if (!result.secure_url) {
       return NextResponse.json({
@@ -46,9 +58,9 @@ export async function POST(req: Request) {
       url: result.secure_url
     })
 
-  } catch (err: any) {
+  } catch (err:any) {
 
-    console.error("Upload error:", err)
+    console.error("UPLOAD ERROR:", err)
 
     return NextResponse.json({
       status: "error",
