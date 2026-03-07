@@ -1,65 +1,130 @@
-import Image from "next/image";
+"use client"
+
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import users from "@/data/users.json"
+
+const quotes = [
+  {
+    text: "Sesungguhnya Allah mencintai seseorang yang apabila bekerja, ia menyempurnakan pekerjaannya.",
+    author: "Hadis Riwayat Thabrani"
+  },
+  {
+    text: "Setiap kalian adalah pemimpin dan setiap kalian akan dimintai pertanggungjawaban atas yang dipimpinnya.",
+    author: "Hadis Riwayat Bukhari & Muslim"
+  },
+  {
+    text: "Pedagang yang jujur dan amanah akan bersama para nabi, orang-orang yang benar, dan para syuhada.",
+    author: "Hadis Riwayat Tirmidzi"
+  },
+  {
+    text: "Tidak beriman seseorang yang tidak amanah, dan tidak sempurna agama bagi yang tidak menepati janji.",
+    author: "Hadis Riwayat Ahmad"
+  },
+  {
+    text: "Hisablah dirimu sebelum kamu dihisab, dan timbanglah amalmu sebelum ditimbang.",
+    author: "Umar bin Khattab RA"
+  },
+  {
+    text: "Kejujuran membawa kepada kebaikan, dan kebaikan membawa ke surga.",
+    author: "Hadis Riwayat Bukhari & Muslim"
+  },
+  {
+    text: "Bekerjalah untuk duniamu seakan-akan kamu hidup selamanya, dan beramallah untuk akhiratmu seakan-akan kamu mati besok.",
+    author: "Ali bin Abi Thalib RA"
+  }
+]
 
 export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+
+  const router = useRouter()
+
+  const [rbm,setRbm] = useState("")
+  const [password,setPassword] = useState("")
+
+  const quote = quotes[Math.floor(Math.random()*quotes.length)]
+
+  function login(){
+
+    if(!rbm){
+      alert("RBM harus diisi")
+      return
+    }
+
+    if(password !== "ptmiu123"){
+      alert("Password salah")
+      return
+    }
+
+    const user = {
+      RBM: rbm.toUpperCase()
+    }
+
+    localStorage.setItem("user", JSON.stringify(user))
+
+    router.push("/dashboard")
+
+  }
+
+  return(
+
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 animate-gradient">
+
+      <div className="bg-white/90 backdrop-blur shadow-xl rounded-xl p-8 w-full max-w-md space-y-6">
+
+        <h1 className="text-2xl font-bold text-center text-gray-800">
+          BACA ULANG UP3 GARUT 2026
+        </h1>
+
+        <div className="text-center text-gray-600 italic text-sm leading-relaxed">
+
+          "{quote.text}"
+
+          <div className="mt-2 not-italic text-gray-500">
+            — {quote.author}
+          </div>
+
+        </div>
+
+        <input
+          placeholder="RBM"
+          value={rbm}
+          onChange={(e)=>setRbm(e.target.value)}
+          className="w-full border p-2 rounded"
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e)=>setPassword(e.target.value)}
+          className="w-full border p-2 rounded"
+        />
+
+        <button
+          onClick={login}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded"
+        >
+          LOGIN
+        </button>
+
+      </div>
+
+      <style jsx>{`
+        .animate-gradient {
+          background-size: 300% 300%;
+          animation: gradientMove 12s ease infinite;
+        }
+
+        @keyframes gradientMove {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+      `}</style>
+
     </div>
-  );
+
+  )
+
 }
