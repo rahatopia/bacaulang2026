@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server"
 
 export async function POST(req: Request) {
-
   try {
 
     const formData = await req.formData()
@@ -17,8 +16,18 @@ export async function POST(req: Request) {
     const cloudName = process.env.CLOUDINARY_CLOUD_NAME
     const uploadPreset = "baca-ulang"
 
+    // Convert file to buffer
+    const bytes = await file.arrayBuffer()
+    const buffer = Buffer.from(bytes)
+
     const data = new FormData()
-    data.append("file", file)
+
+    data.append(
+      "file",
+      new Blob([buffer]),
+      file.name
+    )
+
     data.append("upload_preset", uploadPreset)
 
     const res = await fetch(
@@ -29,26 +38,14 @@ export async function POST(req: Request) {
       }
     )
 
-    const text = await res.text()
+    const result = await res.json()
 
-    console.log("Cloudinary raw response:", text)
-
-    let result
-
-    try {
-      result = JSON.parse(text)
-    } catch {
-      return NextResponse.json({
-        status: "error",
-        message: "Cloudinary returned non JSON",
-        raw: text
-      })
-    }
+    console.log("Cloudinary response:", result)
 
     if (!result.secure_url) {
       return NextResponse.json({
         status: "error",
-        message: "Upload succeeded but URL missing",
+        message: "Upload failed",
         raw: result
       })
     }
@@ -60,13 +57,11 @@ export async function POST(req: Request) {
 
   } catch (err:any) {
 
-    console.error("UPLOAD ERROR:", err)
+    console.error("Upload error:", err)
 
     return NextResponse.json({
       status: "error",
       message: err.message
     })
-
   }
-
 }
